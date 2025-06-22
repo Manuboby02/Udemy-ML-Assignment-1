@@ -1,0 +1,70 @@
+import pandas as pd
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+import seaborn as sns
+
+df = pd.read_csv('healthcare.csv')
+df.describe()
+df.isnull().sum()
+df.hist(figsize=(10,8))
+
+plt.show()
+sns.pairplot(df, hue='work_type')
+
+plt.show()
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+
+df['work_type'] = le.fit_transform(df['work_type'])
+from sklearn.preprocessing import StandardScaler
+
+
+
+scaler = StandardScaler()
+
+X = df.drop('work_type', axis=1)
+
+y = df['work_type']
+
+X_scaled = scaler.fit_transform(X)
+
+from sklearn.model_selection import train_test_split
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+
+X_scaled, y, test_size=0.2, random_state=42)
+from sklearn.ensemble import RandomForestClassifier
+
+
+
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+
+rf_classifier.fit(X_train, y_train)
+y_pred = rf_classifier.predict(X_test)
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+
+
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f'Accuracy: {accuracy:.2f}')
+
+
+
+print('Classification Report:')
+
+print(classification_report(y_test, y_pred))
+
+
+
+cm = confusion_matrix(y_test, y_pred)
+
+sns.heatmap(cm, annot=True)
+
+plt.show()
+
